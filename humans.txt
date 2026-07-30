@@ -1,0 +1,15 @@
+# humans.txt — TFT Legal Service
+# See https://humanstxt.org/
+
+/* TEAM */
+Founder: Giselle Leite
+Partner: Dr. Gabriel Saboia
+Contact: info@tftlegalservice.com
+Location: United States
+
+/* SITE */
+Last update: 2026-07-30
+Language: English
+Standards: HTML5, CSS3, Schema.org JSON-LD
+Doctype: HTML5
+Components: Custom (no framework dependency)
