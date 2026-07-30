@@ -4,6 +4,8 @@
 from pathlib import Path
 
 ROOT = Path("/workspace/TFT-SITE")
+# After generate, run: make paths relative for GitHub Pages project sites
+RELATIVE_PATHS = True
 SITE = "https://www.tftlegalservice.com"
 ORG_PHONE = ""  # not published on source site
 EMAIL = "info@tftlegalservice.com"
