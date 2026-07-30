@@ -1127,3 +1127,14 @@ body::before {
 .section:nth-of-type(even):not(.section--dark):not(.stats-band) {
   background-image: radial-gradient(900px 400px at 10% 0%, rgba(198,161,91,0.05), transparent 60%);
 }
+
+
+/* cookie-banner mobile lift */
+@media (max-width: 620px) {
+  .cookie-banner {
+    bottom: 0.75rem;
+    font-size: 0.8rem;
+    padding: 0.95rem 1rem;
+  }
+  .hero { padding-bottom: 6.5rem; }
+}
