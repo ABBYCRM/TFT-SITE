@@ -2,27 +2,28 @@
   "name": "TFT Legal Service",
   "short_name": "TFT Legal",
   "description": "Connecting individuals with qualified law firms for mass torts, MVA, SSDI, and more.",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#081120",
   "theme_color": "#0c1b33",
   "lang": "en-US",
   "icons": [
     {
-      "src": "/assets/img/favicon.svg",
+      "src": "assets/img/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/assets/img/icon-192.png",
+      "src": "assets/img/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/assets/img/icon-512.png",
+      "src": "assets/img/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "scope": "./"
 }
