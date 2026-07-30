@@ -15,25 +15,31 @@
 
   /* Mobile navigation */
   if (navToggle && mainNav) {
+    function closeNav() {
+      mainNav.classList.remove("is-open");
+      navToggle.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    }
+    function openNav() {
+      mainNav.classList.add("is-open");
+      navToggle.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    }
     navToggle.addEventListener("click", function () {
-      var open = mainNav.classList.toggle("is-open");
-      navToggle.setAttribute("aria-expanded", open ? "true" : "false");
-      document.body.style.overflow = open ? "hidden" : "";
+      if (mainNav.classList.contains("is-open")) closeNav();
+      else openNav();
     });
     mainNav.addEventListener("click", function (e) {
-      if (e.target.closest("a")) {
-        mainNav.classList.remove("is-open");
-        navToggle.setAttribute("aria-expanded", "false");
-        document.body.style.overflow = "";
-      }
+      if (e.target.closest("a")) closeNav();
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && mainNav.classList.contains("is-open")) {
-        mainNav.classList.remove("is-open");
-        navToggle.setAttribute("aria-expanded", "false");
-        document.body.style.overflow = "";
+        closeNav();
         navToggle.focus();
       }
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 860 && mainNav.classList.contains("is-open")) closeNav();
     });
   }
 
