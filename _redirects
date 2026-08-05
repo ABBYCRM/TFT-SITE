@@ -1,0 +1,14 @@
+# DigitalOcean App Platform static-site redirects
+# Mirror of netlify.toml redirects for clean-URL support
+
+/about-us       /about.html          301
+/compliance-policy /compliance.html  301
+/torts          /torts.html          301
+/mva            /mva.html            301
+/ssdi           /ssdi.html           301
+/mortgage       /mortgage.html       301
+/contact        /contact.html        301
+/privacy-policy /privacy.html        301
+
+# Catch-all 404 -> friendly 404 page
+/*              /404.html            404
