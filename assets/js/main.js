@@ -186,7 +186,9 @@
         return;
       }
 
-      /* Fallback: open the visitor's mail client with the form contents. */
+      /* Fallback: no endpoint configured — show a clear, copyable email link
+         with the form contents pre-filled (avoids silent mailto: on mobile
+         devices that have no mail client configured). */
       var name = (form.querySelector("[name=name]") || {}).value || "";
       var email = (form.querySelector("[name=email]") || {}).value || "";
       var phone = (form.querySelector("[name=phone]") || {}).value || "";
@@ -198,12 +200,15 @@
         (phone ? "Phone: " + phone + "\n" : "") +
         "Topic: " + topic + "\n\n" +
         message;
-      window.location.href =
+      var mailto =
         "mailto:info@tftlegalservice.com?subject=" +
         encodeURIComponent("Website inquiry — " + topic) +
         "&body=" + encodeURIComponent(body);
       if (status) {
-        status.textContent = "Opening your email client… You can also reach us directly at info@tftlegalservice.com.";
+        status.innerHTML =
+          "Thanks — please send your message directly by " +
+          "<a href=\"" + mailto + "\">emailing info@tftlegalservice.com</a>. " +
+          "Your form contents are pre-filled in the email link.";
         status.className = "form-status is-success";
       }
     });

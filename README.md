@@ -10,7 +10,17 @@ Enterprise rebuild of [tftlegalservice.com](https://www.tftlegalservice.com).
 - `llms.txt` for LLM / answer-engine discovery
 - XML sitemap with image extensions
 - Open Graph + Twitter cards
-- PWA manifest + security headers (Netlify)
+- PWA manifest
+- Security headers + clean-URL redirects via `netlify.toml` (Netlify deploys)
+
+## Deployment platforms
+
+| Platform | Headers (`netlify.toml`) | Redirects (`netlify.toml`) | Status |
+|----------|---------------------------|----------------------------|--------|
+| Netlify | ✓ via `_headers`-equivalent | ✓ via `_redirects` | Works as-is |
+| DigitalOcean App Platform (static) | ✗ file is served as `/netlify.toml` | ✗ file is served as `/netlify.toml` | Use Cloudflare in front, or a custom web service wrapper |
+| Vercel | ✗ uses `vercel.json` | ✗ uses `vercel.json` | Add `vercel.json` mirroring the rules in `netlify.toml` |
+| Cloudflare Pages | ✓ via `_headers` | ✓ via `_redirects` | Add `_headers` and `_redirects` (see `netlify.toml` for values) |
 
 ## Local preview
 
