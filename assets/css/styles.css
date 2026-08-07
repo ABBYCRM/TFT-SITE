@@ -330,7 +330,6 @@ h1, h2, h3, h4 {
 }
 .btn--ghost-light:hover { border-color: var(--gold-light); color: var(--gold-light); transform: translateY(-2px); }
 
-.btn--sm { padding: 0.65rem 1.25rem; font-size: 0.86rem; }
 
 /* ---------- Hero ---------- */
 
@@ -1469,6 +1468,13 @@ body::before {
 .btn:focus-visible {
   outline: 3px solid var(--brand);
   outline-offset: 3px;
+}
+
+/* Small button: override the 44px min-height so it fits in nav bars */
+.btn--sm {
+  min-block-size: auto;
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.86rem;
 }
 
 /* ---------- Forms: one canonical treatment ---------- */
