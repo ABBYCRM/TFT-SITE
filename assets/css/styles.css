@@ -1233,3 +1233,381 @@ body::before {
 .section:nth-of-type(even):not(.section--dark):not(.stats-band) {
   background-image: radial-gradient(900px 400px at 10% 0%, rgba(198,161,91,0.05), transparent 60%);
 }
+
+/* ==========================================================================
+   Modern UI enhancements — 2026-08-07
+   Surgical additions that layer on top of the existing design system.
+   Patterns from the 120-pattern collection. Existing rules above are
+   preserved; nothing here overrides brand color or typography.
+   ========================================================================== */
+
+/* ---------- 104. light-dark() automatic theming ---------- */
+:root {
+  color-scheme: light dark;
+  --ink-theme:        light-dark(var(--ink), #f1f5f9);
+  --ivory-theme:      light-dark(var(--ivory), #0a1322);
+  --paper-theme:      light-dark(var(--paper), #0f1a2e);
+  --muted-theme:      light-dark(var(--muted), #94a3b8);
+  --navy-800-theme:   light-dark(var(--navy-800), #f8fafc);
+  --line-theme:       light-dark(var(--line), rgba(255, 255, 255, 0.10));
+  --shadow-sm-theme:  light-dark(var(--shadow-sm), 0 1px 2px rgba(0,0,0,0.4), 0 4px 14px rgba(0,0,0,0.4));
+  --shadow-md-theme:  light-dark(var(--shadow-md), 0 6px 18px rgba(0,0,0,0.5), 0 18px 44px rgba(0,0,0,0.5));
+  --shadow-lg-theme:  light-dark(var(--shadow-lg), 0 12px 28px rgba(0,0,0,0.55), 0 32px 72px rgba(0,0,0,0.6));
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--ivory-theme);
+    color: var(--ink-theme);
+  }
+  .section:not(.section--dark),
+  .card,
+  .form-card,
+  .hero-card {
+    background: var(--paper-theme);
+    color: var(--ink-theme);
+  }
+  .display-md, .display-lg, .display-xl,
+  h1, h2, h3, h4 { color: var(--navy-800-theme); }
+  a { color: var(--gold-light); }
+  a:hover { color: var(--gold); }
+  .eyebrow { color: var(--muted-theme); }
+  .info-list .val,
+  .muted,
+  .lede { color: var(--muted-theme); }
+  .hours-table td,
+  .breadcrumbs li,
+  .footer-meta,
+  .footer-bottom { color: var(--muted-theme); }
+  .hours-table tr { border-color: var(--line-theme); }
+  .notice { background: rgba(198, 161, 91, 0.08); border-color: rgba(198, 161, 91, 0.28); }
+  .form-field label { color: var(--muted-theme); }
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    background: var(--paper-theme);
+    color: var(--ink-theme);
+    border-color: var(--line-theme);
+  }
+  .form-field input::placeholder,
+  .form-field textarea::placeholder { color: var(--muted-theme); }
+  .case-card,
+  .team-card { background: var(--paper-theme); }
+  .form-status.is-success { color: #86efac; }
+  .form-status.is-error { color: #fca5a5; }
+  .field-error { color: #fca5a5; }
+  .stat strong { color: var(--navy-800-theme); }
+  .stat span { color: var(--muted-theme); }
+}
+
+/* ---------- 003. Animated gradient text (subtle accent on H1) ---------- */
+.hero h1 .accent {
+  background:
+    linear-gradient(
+      120deg,
+      var(--gold-light) 0%,
+      var(--gold) 30%,
+      #f3d68b 50%,
+      var(--gold) 70%,
+      var(--gold-light) 100%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gold-slide 8s linear infinite;
+}
+@keyframes gold-slide {
+  to { background-position: 200% 0; }
+}
+
+/* ---------- 001. Rotating conic-gradient glow border on the primary CTA ---------- */
+@property --glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.btn--gold {
+  --glow-angle: 0deg;
+  position: relative;
+  isolation: isolate;
+  background-image:
+    linear-gradient(135deg, #e3c47a 0%, var(--gold) 50%, #8e6d2e 100%);
+}
+.btn--gold::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--glow-angle),
+    rgba(198, 161, 91, 0.0) 0deg,
+    rgba(198, 161, 91, 0.6) 90deg,
+    rgba(230, 205, 149, 0.9) 180deg,
+    rgba(198, 161, 91, 0.6) 270deg,
+    rgba(198, 161, 91, 0.0) 360deg);
+  filter: blur(10px);
+  opacity: 0.6;
+  animation: glow-spin 6s linear infinite;
+}
+@keyframes glow-spin {
+  to { --glow-angle: 1turn; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn--gold::before { animation: none; opacity: 0.35; }
+}
+
+/* ---------- 002. Gradient border on cards (no pseudo-element) ---------- */
+.practice-grid .card,
+.grid .card,
+.case-card,
+.team-card {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--paper), var(--paper)) padding-box,
+    linear-gradient(135deg,
+      rgba(198, 161, 91, 0.35),
+      rgba(12, 27, 51, 0.12) 40%,
+      rgba(198, 161, 91, 0.35)) border-box;
+}
+
+/* ---------- 004. Gradient underline on key text links ---------- */
+.fancy-link,
+.hero-list a,
+.breadcrumbs a,
+.legal-link {
+  text-decoration: none;
+  background-image: linear-gradient(90deg, var(--gold), var(--gold-strong));
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s var(--ease);
+}
+.fancy-link:hover,
+.fancy-link:focus-visible,
+.hero-list a:hover,
+.hero-list a:focus-visible,
+.breadcrumbs a:hover,
+.breadcrumbs a:focus-visible,
+.legal-link:hover,
+.legal-link:focus-visible {
+  background-size: 100% 2px;
+}
+
+/* ---------- 033 + 034. Balanced headings + pretty paragraphs ---------- */
+h1, h2, h3, h4 { text-wrap: balance; }
+.prose p,
+.section > .container p,
+.lede { text-wrap: pretty; }
+
+/* ---------- 036. Better underlines across the site ---------- */
+a {
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: auto;
+}
+
+/* ---------- 037. Tabular numbers on stats/timers ---------- */
+.stat strong,
+.timer,
+[data-count] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 046. Stronger, prettier focus rings ---------- */
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.btn:focus-visible {
+  outline-color: var(--gold-light);
+  outline-offset: 4px;
+}
+
+/* ---------- 047. Highlight focused form field group ---------- */
+.form-field:focus-within label {
+  color: var(--gold-strong);
+}
+.form-field:focus-within input,
+.form-field:focus-within select,
+.form-field:focus-within textarea {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(198, 161, 91, 0.18);
+  outline: none;
+}
+
+/* ---------- 069. Refined selection colors ---------- */
+::selection {
+  background: var(--gold);
+  color: var(--navy-900);
+}
+.hero ::selection,
+.section--dark ::selection {
+  background: var(--gold-light);
+  color: var(--navy-900);
+}
+
+/* ---------- 082. Stagger children in groups that opt in ---------- */
+[data-stagger] .reveal {
+  animation-delay: calc(var(--reveal-delay, 0s));
+}
+
+/* ---------- 085. Modern individual transform-property hover on cards ---------- */
+.card,
+.case-card,
+.team-card,
+.practice-grid > .card,
+.grid > .card {
+  transition:
+    translate 0.25s var(--ease),
+    scale 0.25s var(--ease),
+    box-shadow 0.25s var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover,
+  .case-card:hover,
+  .team-card:hover,
+  .practice-grid > .card:hover,
+  .grid > .card:hover {
+    translate: 0 -4px;
+    scale: 1.012;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+/* ---------- 088. @starting-style entry for the cookie banner ---------- */
+.cookie-banner {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity 0.25s var(--ease), translate 0.25s var(--ease);
+}
+@starting-style {
+  .cookie-banner.is-visible {
+    opacity: 0;
+    translate: 0 1rem;
+  }
+}
+
+/* ---------- 094. Anchor offset beneath the sticky header ---------- */
+[id] {
+  scroll-margin-block-start: 96px;
+}
+
+/* ---------- 098. Safe-area insets on the cookie banner and CTA band ---------- */
+.cookie-banner {
+  padding-block-end: max(1rem, env(safe-area-inset-bottom));
+  padding-inline:
+    max(1rem, env(safe-area-inset-left))
+    max(1rem, env(safe-area-inset-right));
+}
+.cta-band {
+  padding-block-end: max(2rem, env(safe-area-inset-bottom));
+}
+
+/* ---------- 114. Higher-contrast preference ---------- */
+@media (prefers-contrast: more) {
+  :focus-visible { outline-width: 4px; }
+  .card,
+  .case-card,
+  .team-card { border-width: 2px; border-color: currentColor; }
+  .btn { border: 2px solid currentColor; }
+}
+
+/* ---------- 115. Larger tap targets on touch devices ---------- */
+@media (pointer: coarse) {
+  .btn,
+  .nav-toggle,
+  .cookie-banner button,
+  .faq-q {
+    min-block-size: 44px;
+  }
+}
+
+/* ---------- 116 + 117. Performance: content-visibility + contain for off-screen sections ---------- */
+.section--tight,
+.cta-band,
+.cookie-banner,
+.reveal {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
+}
+.practice-grid,
+.case-grid,
+.team-grid,
+.stats-grid {
+  contain: layout paint;
+}
+
+/* ---------- 108. Cascade layers (declared globally so future additions land predictably) ---------- */
+@layer reset, base, components, utilities;
+
+/* ---------- 109. @scope: tighter selector reach in prose blocks ---------- */
+@scope (.prose) to (.widget) {
+  a:not(:hover):not(:focus-visible) {
+    color: var(--navy-700);
+  }
+}
+
+/* ---------- 113. Forced-colors (Windows High Contrast) support ---------- */
+@media (forced-colors: active) {
+  .btn { border: 1px solid ButtonText; }
+  .form-field input,
+  .form-field select,
+  .form-field textarea { border: 1px solid ButtonText; }
+  .card,
+  .case-card,
+  .team-card { border: 1px solid ButtonText; }
+  :focus-visible { outline: 3px solid Highlight; }
+}
+
+/* ---------- 105. color-mix() hover treatment for footer/links ---------- */
+.footer a:hover,
+.footer a:focus-visible {
+  color: color-mix(in oklab, var(--gold-light) 80%, white);
+}
+
+/* ---------- 119. Better print treatment for legal pages ---------- */
+@media print {
+  .site-header,
+  .nav-toggle,
+  .hero-media,
+  .hero-actions,
+  .cta-band,
+  .scroll-hint,
+  .cookie-banner,
+  .media-frame::before,
+  body::before { display: none !important; }
+  body { background: #fff; color: #000; }
+  .section, .page-hero { padding: 0.5cm 0; }
+  .card, .case-card, .team-card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  a { color: #000; text-decoration: underline; }
+  a[href^="http"]::after,
+  a[href^="/"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #555;
+  }
+  .notice { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #000 !important; }
+  .display-xl, .display-lg, .display-md { color: #000 !important; }
+}
+
+/* ---------- 081. Hardened reduced-motion safety net ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .card:hover, .case-card:hover, .team-card:hover { translate: 0; scale: 1; }
+  .btn--gold::before { animation: none !important; }
+  .hero h1 .accent { animation: none !important; }
+  .hero-media img { animation: none !important; }
+}
