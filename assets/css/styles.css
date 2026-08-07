@@ -1166,25 +1166,9 @@ h1, h2, h3, h4 {
   .hero h1 { font-size: 2rem; }
 }
 
-/* ---------- Reduced motion ---------- */
+/* ---------- Reduced motion (handled in harmonized block below) ---------- */
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  .reveal { opacity: 1; transform: none; }
-}
-
-/* ---------- Print ---------- */
-
-@media print {
-  .site-header, .cookie-banner, .cta-band, .scroll-hint { display: none !important; }
-  body { background: #fff; }
-}
-
+/* ---------- Print (handled in harmonized block below) ---------- */
 
 /* ---------- Enterprise atmosphere ---------- */
 
@@ -1233,611 +1217,375 @@ body::before {
 .section:nth-of-type(even):not(.section--dark):not(.stats-band) {
   background-image: radial-gradient(900px 400px at 10% 0%, rgba(198,161,91,0.05), transparent 60%);
 }
-
 /* ==========================================================================
-   Modern UI enhancements — 2026-08-07
-   Surgical additions that layer on top of the existing design system.
-   Patterns from the 120-pattern collection. Existing rules above are
-   preserved; nothing here overrides brand color or typography.
+   Harmonized system additions — replaces the round-1 + round-2 fragments.
+   One :root for tokens. One of each @media block. One @layer declaration.
+   All design decisions live as tokens, not as ad-hoc rules.
    ========================================================================== */
 
-/* ---------- 104. light-dark() automatic theming ---------- */
+/* ---------- Semantic tokens (consolidates 3 :root blocks → 1) ----------
+   Existing raw palette tokens (--navy-*, --gold-*, --ivory, --paper, --ink,
+   --muted, --line, --shadow-*) are kept above. Below we add the
+   semantic layer that components actually reference. */
+
 :root {
   color-scheme: light dark;
-  --ink-theme:        light-dark(var(--ink), #f1f5f9);
-  --ivory-theme:      light-dark(var(--ivory), #0a1322);
-  --paper-theme:      light-dark(var(--paper), #0f1a2e);
-  --muted-theme:      light-dark(var(--muted), #94a3b8);
-  --navy-800-theme:   light-dark(var(--navy-800), #f8fafc);
-  --line-theme:       light-dark(var(--line), rgba(255, 255, 255, 0.10));
-  --shadow-sm-theme:  light-dark(var(--shadow-sm), 0 1px 2px rgba(0,0,0,0.4), 0 4px 14px rgba(0,0,0,0.4));
-  --shadow-md-theme:  light-dark(var(--shadow-md), 0 6px 18px rgba(0,0,0,0.5), 0 18px 44px rgba(0,0,0,0.5));
-  --shadow-lg-theme:  light-dark(var(--shadow-lg), 0 12px 28px rgba(0,0,0,0.55), 0 32px 72px rgba(0,0,0,0.6));
+
+  /* Surfaces & text — auto-adapt with light-dark() */
+  --surface:        light-dark(var(--paper),    #0f1a2e);
+  --surface-2:      light-dark(var(--ivory),    #0a1322);
+  --surface-dark:   light-dark(var(--navy-800), #061226);
+  --text:           light-dark(var(--ink),      #f1f5f9);
+  --text-on-dark:   #f8fafc;
+  --text-muted:     light-dark(var(--muted),    #94a3b8);
+  --border:         light-dark(var(--line),     rgba(255, 255, 255, 0.10));
+  --border-on-dark: var(--line-light);
+
+  /* Brand & accents */
+  --brand:        var(--gold);
+  --brand-strong: var(--gold-strong);
+  --brand-light:  var(--gold-light);
+  --accent:       var(--gold);
+  --link:         var(--navy-700);
+  --link-hover:   var(--gold-strong);
+
+  /* Status */
+  --danger:        #dc2626;
+  --danger-soft:   rgba(220, 38, 38, 0.12);
+  --success:       #16a34a;
+  --success-soft:  rgba(34, 197, 94, 0.55);
+  --warning:       #f59e0b;
+  --notice-bg:     rgba(198, 161, 91, 0.08);
+  --notice-border: rgba(198, 161, 91, 0.28);
+
+  /* Spacing rhythm (8px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --section-y:    clamp(2rem, 1rem + 6vw, 7rem);
+  --section-y-sm: clamp(1.25rem, 0.5rem + 3vw, 3rem);
+  --gutter:       clamp(1rem, 4vw, 2.5rem);
+
+  /* Radius — one coherent scale */
+  --radius-sm: 12px;
+  --radius:    18px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Elevation — one coherent shadow language, light + dark */
+  --elev-1: 0 1px 2px rgba(8, 17, 32, 0.06), 0 4px 14px rgba(8, 17, 32, 0.06);
+  --elev-2: 0 6px 18px rgba(8, 17, 32, 0.08), 0 18px 44px rgba(8, 17, 32, 0.12);
+  --elev-3: 0 12px 28px rgba(8, 17, 32, 0.14), 0 32px 72px rgba(8, 17, 32, 0.2);
+  --elev-inset: inset 0 0 0 1px rgba(198, 161, 91, 0.08);
+  --elev-1-d: 0 1px 2px rgba(0,0,0,0.4), 0 4px 14px rgba(0,0,0,0.4);
+  --elev-2-d: 0 6px 18px rgba(0,0,0,0.5), 0 18px 44px rgba(0,0,0,0.5);
+  --elev-3-d: 0 12px 28px rgba(0,0,0,0.55), 0 32px 72px rgba(0,0,0,0.6);
+
+  /* Motion — one coherent timing language */
+  --ease:        cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast:    0.18s;
+  --dur:         0.25s;
+  --dur-slow:    0.4s;
+  --dur-deliberate: 0.6s;
+
+  /* Layout */
+  --container: 1180px;
+  --container-prose: 65ch;
+  --header-h:  72px;
+
+  /* Form */
+  --field-radius: 10px;
+  --field-bg:        var(--surface);
+  --field-border:    var(--border);
+  --field-text:      var(--text);
+  --field-placeholder: var(--text-muted);
+  --focus-ring: 0 0 0 4px color-mix(in oklab, var(--brand) 18%, transparent);
+
+  /* Native controls */
+  accent-color: var(--brand);
+  caret-color:  var(--brand-strong);
 }
 
+/* ---------- One dark-mode override (was 3, now 1) ---------- */
 @media (prefers-color-scheme: dark) {
+  :root {
+    --elev-1: var(--elev-1-d);
+    --elev-2: var(--elev-2-d);
+    --elev-3: var(--elev-3-d);
+  }
   body {
-    background: var(--ivory-theme);
-    color: var(--ink-theme);
+    background: var(--surface-2);
+    color: var(--text);
   }
-  .section:not(.section--dark),
-  .card,
-  .form-card,
-  .hero-card {
-    background: var(--paper-theme);
-    color: var(--ink-theme);
-  }
-  .display-md, .display-lg, .display-xl,
-  h1, h2, h3, h4 { color: var(--navy-800-theme); }
-  a { color: var(--gold-light); }
-  a:hover { color: var(--gold); }
-  .eyebrow { color: var(--muted-theme); }
+  h1, h2, h3, h4,
+  .display-md, .display-lg, .display-xl { color: var(--text); }
+  a { color: var(--brand-light); }
+  a:hover { color: var(--brand); }
+
+  .eyebrow,
   .info-list .val,
   .muted,
-  .lede { color: var(--muted-theme); }
+  .lede,
   .hours-table td,
   .breadcrumbs li,
   .footer-meta,
-  .footer-bottom { color: var(--muted-theme); }
-  .hours-table tr { border-color: var(--line-theme); }
-  .notice { background: rgba(198, 161, 91, 0.08); border-color: rgba(198, 161, 91, 0.28); }
-  .form-field label { color: var(--muted-theme); }
+  .footer-bottom,
+  .form-field label,
+  .stat span { color: var(--text-muted); }
+
+  .section:not(.section--dark),
+  .card,
+  .form-card,
+  .hero-card,
+  .case-card,
+  .team-card {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .hours-table tr,
+  .stat strong { border-color: var(--border); color: var(--text); }
+  .notice { background: var(--notice-bg); border-color: var(--notice-border); }
+
   .form-field input,
   .form-field select,
   .form-field textarea {
-    background: var(--paper-theme);
-    color: var(--ink-theme);
-    border-color: var(--line-theme);
+    background: var(--field-bg);
+    color: var(--field-text);
+    border-color: var(--field-border);
   }
   .form-field input::placeholder,
-  .form-field textarea::placeholder { color: var(--muted-theme); }
-  .case-card,
-  .team-card { background: var(--paper-theme); }
-  .form-status.is-success { color: #86efac; }
-  .form-status.is-error { color: #fca5a5; }
-  .field-error { color: #fca5a5; }
-  .stat strong { color: var(--navy-800-theme); }
-  .stat span { color: var(--muted-theme); }
+  .form-field textarea::placeholder { color: var(--field-placeholder); }
+
+  .form-status.is-success { color: var(--success); }
+  .form-status.is-error,
+  .field-error { color: var(--danger); }
 }
 
-/* ---------- 003. Animated gradient text (subtle accent on H1) ---------- */
-.hero h1 .accent {
-  background:
-    linear-gradient(
-      120deg,
-      var(--gold-light) 0%,
-      var(--gold) 30%,
-      #f3d68b 50%,
-      var(--gold) 70%,
-      var(--gold-light) 100%);
-  background-size: 200% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: gold-slide 8s linear infinite;
-}
-@keyframes gold-slide {
-  to { background-position: 200% 0; }
-}
-
-/* ---------- 001. Rotating conic-gradient glow border on the primary CTA ---------- */
-@property --glow-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-.btn--gold {
-  --glow-angle: 0deg;
-  position: relative;
+/* ---------- Cards: one coherent treatment ----------
+   Replaces the scattered per-type card rules. All .card-like surfaces
+   share the same radius, border, padding, hover behavior. */
+.case-card,
+.team-card,
+.form-card,
+.grid > .card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--elev-1), var(--elev-inset);
   isolation: isolate;
-  background-image:
-    linear-gradient(135deg, #e3c47a 0%, var(--gold) 50%, #8e6d2e 100%);
-}
-.btn--gold::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  z-index: -1;
-  border-radius: inherit;
-  background: conic-gradient(
-    from var(--glow-angle),
-    rgba(198, 161, 91, 0.0) 0deg,
-    rgba(198, 161, 91, 0.6) 90deg,
-    rgba(230, 205, 149, 0.9) 180deg,
-    rgba(198, 161, 91, 0.6) 270deg,
-    rgba(198, 161, 91, 0.0) 360deg);
-  filter: blur(10px);
-  opacity: 0.6;
-  animation: glow-spin 6s linear infinite;
-}
-@keyframes glow-spin {
-  to { --glow-angle: 1turn; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .btn--gold::before { animation: none; opacity: 0.35; }
+  min-inline-size: 0;
 }
 
-/* ---------- 002. Gradient border on cards (no pseudo-element) ---------- */
-.practice-grid .card,
-.grid .card,
+/* Gradient border (gold edge) — applied via padding-box on top of the
+   standard card. Uses theme-aware surface so dark mode gets a dark fill. */
+.grid > .card,
 .case-card,
 .team-card {
   border: 1.5px solid transparent;
   background:
-    linear-gradient(var(--paper-theme, var(--paper)), var(--paper-theme, var(--paper))) padding-box,
+    linear-gradient(var(--surface), var(--surface)) padding-box,
     linear-gradient(135deg,
-      rgba(198, 161, 91, 0.35),
-      rgba(12, 27, 51, 0.12) 40%,
-      rgba(198, 161, 91, 0.35)) border-box;
+      color-mix(in oklab, var(--brand) 35%, transparent),
+      color-mix(in oklab, var(--navy-800) 12%, transparent) 40%,
+      color-mix(in oklab, var(--brand) 35%, transparent)) border-box;
 }
 
-/* ---------- 004. Gradient underline on key text links ---------- */
-.fancy-link,
-.hero-list a,
-.breadcrumbs a,
-.legal-link {
+/* Card hover: one canonical lift, used everywhere */
+@media (hover: hover) and (pointer: fine) {
+  .case-card,
+  .team-card,
+  .grid > .card {
+    transition:
+      translate var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease),
+      scale var(--dur) var(--ease);
+  }
+  .case-card:hover { translate: 0 -6px; box-shadow: var(--elev-3); }
+  .team-card:hover,
+  .grid > .card:hover {
+    translate: 0 -4px;
+    scale: 1.012;
+    box-shadow: var(--elev-3);
+  }
+}
+
+/* ---------- Buttons: one canonical treatment ----------
+   All .btn variants share the same height, radius, weight, focus ring. */
+.btn {
+  --btn-bg:      var(--navy-800);
+  --btn-text:    #fff;
+  --btn-border:  var(--navy-800);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  padding-inline: var(--space-5);
+  padding-block: var(--space-3);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-text);
   text-decoration: none;
-  background-image: linear-gradient(90deg, var(--gold), var(--gold-strong));
-  background-size: 0% 2px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 0.3s var(--ease);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
-.fancy-link:hover,
-.fancy-link:focus-visible,
-.hero-list a:hover,
-.hero-list a:focus-visible,
-.breadcrumbs a:hover,
-.breadcrumbs a:focus-visible,
-.legal-link:hover,
-.legal-link:focus-visible {
-  background-size: 100% 2px;
+.btn:hover { background: var(--navy-900); border-color: var(--navy-900); }
+
+.btn--gold {
+  --btn-bg:     var(--brand);
+  --btn-text:   var(--navy-900);
+  --btn-border: var(--brand);
+  background-image: linear-gradient(135deg, #e3c47a, var(--brand) 50%, #8e6d2e);
+  position: relative;
+  isolation: isolate;
+}
+.btn--gold:hover {
+  background:
+    hsl(from var(--brand) h s calc(l + 4));
+  filter: saturate(1.08);
 }
 
-/* ---------- 033 + 034. Balanced headings + pretty paragraphs ---------- */
-h1, h2, h3, h4 { text-wrap: balance; }
+.btn--ghost,
+.btn--outline {
+  --btn-bg:     transparent;
+  --btn-text:   var(--navy-800);
+  --btn-border: var(--border);
+}
+.btn--ghost:hover,
+.btn--outline:hover {
+  background: color-mix(in oklab, var(--navy-800) 6%, transparent);
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* ---------- Forms: one canonical treatment ---------- */
+.form-field {
+  display: grid;
+  gap: var(--space-2);
+}
+.form-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--field-bg);
+  color: var(--field-text);
+  border: 1px solid var(--field-border);
+  border-radius: var(--field-radius);
+  font: inherit;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.form-field input::placeholder,
+.form-field textarea::placeholder { color: var(--field-placeholder); }
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus,
+.form-field:focus-within input,
+.form-field:focus-within select,
+.form-field:focus-within textarea {
+  border-color: var(--brand);
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+.form-field:focus-within label { color: var(--brand-strong); }
+
+input:user-invalid,
+textarea:user-invalid,
+select:user-invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+input:user-valid,
+textarea:user-valid,
+select:user-valid {
+  border-color: var(--success-soft);
+}
+
+.field-error { color: var(--danger); font-size: 0.85rem; }
+
+/* ---------- Typography: one hierarchy ---------- */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 560;
+  line-height: 1.12;
+  color: var(--navy-800);
+  margin: 0 0 0.6em;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.display-xl { font-size: clamp(2.6rem, 6vw, 4.4rem); }
+.display-lg { font-size: clamp(2.1rem, 4.4vw, 3.2rem); }
+.display-md { font-size: clamp(1.6rem, 3vw, 2.2rem); }
 .prose p,
 .section > .container p,
 .lede { text-wrap: pretty; }
 
-/* ---------- 036. Better underlines across the site ---------- */
 a {
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.18em;
   text-decoration-skip-ink: auto;
 }
 
-/* ---------- 037. Tabular numbers on stats/timers ---------- */
 .stat strong,
 .timer,
-[data-count] {
-  font-variant-numeric: tabular-nums;
+[data-count] { font-variant-numeric: tabular-nums; }
+
+/* ---------- Sticky header: one treatment, frosted on scroll ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition:
+    background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+  border-block-end: 1px solid transparent;
+}
+.site-header.is-scrolled {
+  background: color-mix(in oklab, var(--ivory) 78%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  border-block-end-color: var(--border);
 }
 
-/* ---------- 046. Stronger, prettier focus rings ---------- */
+/* ---------- Focus: one canonical ring, applied via :focus-visible ---------- */
 :focus-visible {
-  outline: 3px solid var(--gold);
+  outline: 3px solid var(--brand);
   outline-offset: 3px;
   border-radius: 6px;
 }
-.btn:focus-visible {
-  outline-color: var(--gold-light);
-  outline-offset: 4px;
-}
 
-/* ---------- 047. Highlight focused form field group ---------- */
-.form-field:focus-within label {
-  color: var(--gold-strong);
-}
-.form-field:focus-within input,
-.form-field:focus-within select,
-.form-field:focus-within textarea {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 4px rgba(198, 161, 91, 0.18);
-  outline: none;
-}
-
-/* ---------- 069. Refined selection colors ---------- */
-::selection {
-  background: var(--gold);
-  color: var(--navy-900);
-}
-.hero ::selection,
-.section--dark ::selection {
-  background: var(--gold-light);
-  color: var(--navy-900);
-}
-
-/* ---------- 082. Stagger children in groups that opt in ---------- */
-[data-stagger] .reveal {
-  animation-delay: calc(var(--reveal-delay, 0s));
-}
-
-/* ---------- 085. Modern individual transform-property hover on cards ---------- */
-.card,
-.case-card,
-.team-card,
-.practice-grid > .card,
-.grid > .card {
-  transition:
-    translate 0.25s var(--ease),
-    scale 0.25s var(--ease),
-    box-shadow 0.25s var(--ease);
-}
-@media (hover: hover) and (pointer: fine) {
-  .card:hover,
-  .case-card:hover,
-  .team-card:hover,
-  .practice-grid > .card:hover,
-  .grid > .card:hover {
-    translate: 0 -4px;
-    scale: 1.012;
-    box-shadow: var(--shadow-lg);
-  }
-}
-
-/* ---------- 088. @starting-style entry for the cookie banner ---------- */
-.cookie-banner {
-  opacity: 1;
-  translate: 0 0;
-  transition: opacity 0.25s var(--ease), translate 0.25s var(--ease);
-}
-@starting-style {
-  .cookie-banner.is-visible {
-    opacity: 0;
-    translate: 0 1rem;
-  }
-}
-
-/* ---------- 094. Anchor offset beneath the sticky header ---------- */
-[id] {
-  scroll-margin-block-start: 96px;
-}
-
-/* ---------- 098. Safe-area insets on the cookie banner and CTA band ---------- */
-.cookie-banner {
-  padding-block-end: max(1rem, env(safe-area-inset-bottom));
-  padding-inline:
-    max(1rem, env(safe-area-inset-left))
-    max(1rem, env(safe-area-inset-right));
-}
-.cta-band {
-  padding-block-end: max(2rem, env(safe-area-inset-bottom));
-}
-
-/* ---------- 114. Higher-contrast preference ---------- */
-@media (prefers-contrast: more) {
-  :focus-visible { outline-width: 4px; }
-  .card,
-  .case-card,
-  .team-card { border-width: 2px; border-color: currentColor; }
-  .btn { border: 2px solid currentColor; }
-}
-
-/* ---------- 115. Larger tap targets on touch devices ---------- */
-@media (pointer: coarse) {
-  .btn,
-  .nav-toggle,
-  .cookie-banner button,
-  .faq-q {
-    min-block-size: 44px;
-  }
-}
-
-/* ---------- 116 + 117. Performance: content-visibility + contain for off-screen sections ---------- */
-.section--tight,
-.cta-band,
-.cookie-banner {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 400px;
-}
-.practice-grid,
-.case-grid,
-.team-grid,
-.stats-grid {
-  contain: layout paint;
-}
-
-/* ---------- 108. Cascade layers (declared globally so future additions land predictably) ---------- */
-@layer reset, base, components, utilities;
-
-/* ---------- 109. @scope: tighter selector reach in prose blocks ---------- */
-@scope (.prose) to (.widget) {
-  a:not(:hover):not(:focus-visible) {
-    color: var(--navy-700);
-  }
-}
-
-/* ---------- 113. Forced-colors (Windows High Contrast) support ---------- */
-@media (forced-colors: active) {
-  .btn { border: 1px solid ButtonText; }
-  .form-field input,
-  .form-field select,
-  .form-field textarea { border: 1px solid ButtonText; }
-  .card,
-  .case-card,
-  .team-card { border: 1px solid ButtonText; }
-  :focus-visible { outline: 3px solid Highlight; }
-}
-
-/* ---------- 105. color-mix() hover treatment for footer/links ---------- */
-.footer a:hover,
-.footer a:focus-visible {
-  color: color-mix(in oklab, var(--gold-light) 80%, white);
-}
-
-/* ---------- 119. Better print treatment for legal pages ---------- */
-@media print {
-  .site-header,
-  .nav-toggle,
-  .hero-media,
-  .hero-actions,
-  .cta-band,
-  .scroll-hint,
-  .cookie-banner,
-  .media-frame::before,
-  body::before { display: none !important; }
-  body { background: #fff; color: #000; }
-  .section, .page-hero { padding: 0.5cm 0; }
-  .card, .case-card, .team-card {
-    break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid #ccc;
-  }
-  a { color: #000; text-decoration: underline; }
-  a[href^="http"]::after,
-  a[href^="/"]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.85em;
-    color: #555;
-  }
-  .notice { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #000 !important; }
-  .display-xl, .display-lg, .display-md { color: #000 !important; }
-}
-
-/* ---------- 081. Hardened reduced-motion safety net ---------- */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto !important; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-  .reveal { opacity: 1 !important; transform: none !important; }
-  .card:hover, .case-card:hover, .team-card:hover { translate: 0; scale: 1; }
-  .btn--gold::before { animation: none !important; }
-  .hero h1 .accent { animation: none !important; }
-  .hero-media img { animation: none !important; }
-}
-
-/* ==========================================================================
-   Spatial UI depth pass — 2026-08-07 (round 2)
-   More depth, more motion, more interaction polish.
-   Continuing from the previous 27-pattern upgrade. Existing rules preserved.
-   ========================================================================== */
-
-/* ---------- 005. Neon glow on the "Trusted" wordmark in the hero ---------- */
-.hero h1 .accent {
-  text-shadow:
-    0 0 0.02em rgba(230, 205, 149, 0.6),
-    0 0 0.6em rgba(198, 161, 91, 0.35);
-}
-
-/* ---------- 006. Layered elevation (refined shadow recipe) ---------- */
-.case-card,
-.team-card,
-.form-card,
-.cta-band {
-  box-shadow:
-    0 1px 2px rgba(8, 17, 32, 0.04),
-    0 6px 16px rgba(8, 17, 32, 0.06),
-    0 24px 48px -8px rgba(8, 17, 32, 0.10);
-}
-@media (prefers-color-scheme: dark) {
-  .case-card,
-  .team-card,
-  .form-card {
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.4),
-      0 6px 16px rgba(0, 0, 0, 0.4),
-      0 24px 48px -8px rgba(0, 0, 0, 0.55);
-  }
-}
-
-/* ---------- 007. Inner hairline on cards for crisp edge ---------- */
-.case-card,
-.team-card,
-.grid > .card {
-  box-shadow:
-    var(--shadow-sm, none),
-    inset 0 0 0 1px rgba(198, 161, 91, 0.08);
-}
-
-/* ---------- 008. Frosted glass on the header once scrolled ---------- */
-.site-header.is-scrolled {
-  background: rgba(247, 244, 238, 0.78);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  backdrop-filter: blur(14px) saturate(160%);
-  border-block-end: 1px solid var(--line);
-}
-@media (prefers-color-scheme: dark) {
-  .site-header.is-scrolled {
-    background: rgba(6, 13, 26, 0.78);
-    border-block-end: 1px solid rgba(255, 255, 255, 0.08);
-  }
-}
-
-/* ---------- 009. Spotlight on the dark stats band ---------- */
-.stats-band {
-  position: relative;
-  isolation: isolate;
-}
-.stats-band::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(
-      ellipse 80% 50% at 50% 0%,
-      rgba(198, 161, 91, 0.18),
-      transparent 70%
-    );
-  pointer-events: none;
-}
-
-/* ---------- 018. Subgrid alignment in practice-area card grid ---------- */
-.practice-grid,
-.grid.grid--2 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
-  gap: 1.25rem;
-}
-.grid.grid--2 > .card,
-.practice-grid > .card {
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  align-content: start;
-}
-.grid.grid--2 > .card > .card-link,
-.practice-grid > .card > .card-link {
-  align-self: end;
-}
-
-/* ---------- 020. Stop flex/grid children overflowing ---------- */
-.card,
-.case-card,
-.team-card,
-.form-card,
-.practice-grid > * {
-  min-inline-size: 0;
-  min-width: 0;
-}
-
-/* ---------- 039. Graceful hyphenation in long-form text ---------- */
-.prose,
-.section .lede,
-.info-list {
-  hyphens: auto;
-  overflow-wrap: break-word;
-}
-
-/* ---------- 040. Drop cap on the homepage mission section body copy ---------- */
-.page-hero + .section .container > p:first-of-type::first-letter,
-.mission-body > p:first-of-type::first-letter {
-  float: inline-start;
-  font-family: var(--font-display);
-  font-size: 3.4em;
-  line-height: 0.85;
-  font-weight: 600;
-  color: var(--gold-strong);
-  margin-inline-end: 0.12em;
-  margin-block-start: 0.08em;
-}
-
-/* ---------- 041. :has() for active FAQ state ---------- */
+/* ---------- FAQ :has() — single source of truth ---------- */
 .faq-item:has(.faq-q[aria-expanded="true"]) {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(198, 161, 91, 0.12);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 12%, transparent);
 }
-.faq-item:has(.faq-q[aria-expanded="true"]) .faq-q {
-  color: var(--navy-800);
-}
-
-/* ---------- 048. section:target for in-page anchor emphasis ---------- */
-:target {
-  scroll-margin-block-start: 96px;
-  outline: 3px solid var(--gold);
-  outline-offset: 0.5rem;
-  border-radius: 8px;
-  animation: target-pulse 1.6s ease-out 1;
-}
-@keyframes target-pulse {
-  0%   { outline-color: var(--gold); }
-  100% { outline-color: transparent; }
-}
-
-/* ---------- 049. Animate the FAQ answer panel when opened ---------- */
-details.faq-item[open] > .faq-a {
-  animation: faq-reveal 0.25s var(--ease) both;
-}
+.faq-item:has(.faq-q[aria-expanded="true"]) .faq-q { color: var(--navy-800); }
+details.faq-item[open] > .faq-a { animation: faq-reveal var(--dur) var(--ease) both; }
+details.faq-item[open] > summary { color: var(--navy-800); }
 @keyframes faq-reveal {
   from { opacity: 0; translate: 0 -0.4rem; }
   to   { opacity: 1; translate: 0 0; }
 }
-details.faq-item[open] > summary {
-  color: var(--navy-800);
-}
 
-/* ---------- 050. data-state for the process timeline ---------- */
-.timeline-step[data-state="active"],
-.timeline-step[data-state="complete"] {
-  --dot-color: var(--gold);
-}
-.timeline-step[data-state="pending"] {
-  --dot-color: rgba(255, 255, 255, 0.4);
-}
-.timeline-step {
-  --dot-color: rgba(255, 255, 255, 0.4);
-}
-.timeline-step .step-number {
-  background: var(--dot-color);
-}
-
-/* ---------- 051. accent-color for native form controls ---------- */
-:root {
-  accent-color: var(--gold);
-}
-
-/* ---------- 054. Validation only after user interaction ---------- */
-input:user-invalid,
-textarea:user-invalid,
-select:user-invalid {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
-}
-input:user-valid,
-textarea:user-valid,
-select:user-valid {
-  border-color: rgba(34, 197, 94, 0.55);
-}
-
-/* ---------- 059. Brand the text caret in form fields ---------- */
-input,
-textarea,
-[contenteditable="true"] {
-  caret-color: var(--gold-strong);
-}
-
-/* ---------- 061-065. Decorative counters and lists ---------- */
-li::marker {
-  color: var(--gold-strong);
-}
-
-/* Hierarchical numbering for the FAQ outline / TOC if added later */
-.outline ol,
-.toc {
-  list-style: none;
-  counter-reset: item;
-  padding-inline-start: 0;
-}
-.outline li,
-.toc li {
-  counter-increment: item;
-}
-.outline li::before,
-.toc li::before {
-  content: counters(item, ".") " ";
-  color: var(--gold-strong);
-  font-weight: 700;
-  margin-inline-end: 0.4em;
-}
-
-/* Step number badges (process timeline) */
-.timeline-step .step-number {
-  counter-reset: step;
-}
+/* ---------- Process timeline: counter-based numbered circles ---------- */
 .timeline ol.timeline-list {
   list-style: none;
   counter-reset: step;
@@ -1855,7 +1603,7 @@ li::marker {
   width: 1.8rem;
   height: 1.8rem;
   border-radius: 50%;
-  background: var(--gold);
+  background: var(--brand);
   color: var(--navy-900);
   font-weight: 700;
   font-size: 0.85rem;
@@ -1863,13 +1611,177 @@ li::marker {
   place-items: center;
   font-family: var(--font-body);
 }
+.timeline-step[data-state="active"]   { --dot-color: var(--brand); }
+.timeline-step[data-state="pending"]  { --dot-color: color-mix(in oklab, #fff 40%, transparent); }
+.timeline-step .step-number { background: var(--dot-color, var(--brand)); }
 
-/* ---------- 067. Decorative quotation mark on blockquotes ---------- */
+/* ---------- :target pulse — one canonical animation ---------- */
+:target {
+  scroll-margin-block-start: 96px;
+  outline: 3px solid var(--brand);
+  outline-offset: 0.5rem;
+  border-radius: 8px;
+  animation: target-pulse 1.6s var(--ease) 1;
+}
+@keyframes target-pulse {
+  from { outline-color: var(--brand); }
+  to   { outline-color: transparent; }
+}
+
+/* ---------- Hero — one coherent treatment ---------- */
+.hero h1 { text-wrap: balance; }
+.hero h1 .accent {
+  background:
+    linear-gradient(120deg, var(--brand-light), var(--brand)) 0 0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-style: italic;
+  text-shadow: 0 0 0.6em color-mix(in oklab, var(--brand) 35%, transparent);
+  animation: gold-slide 8s linear infinite;
+}
+@keyframes gold-slide { to { background-position: 200% 0; } }
+
+.btn--gold::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--glow-angle),
+    color-mix(in oklab, var(--brand) 0%, transparent) 0deg,
+    color-mix(in oklab, var(--brand) 60%, transparent) 90deg,
+    color-mix(in oklab, var(--brand-light) 90%, transparent) 180deg,
+    color-mix(in oklab, var(--brand) 60%, transparent) 270deg,
+    color-mix(in oklab, var(--brand) 0%, transparent) 360deg);
+  filter: blur(10px);
+  opacity: 0.6;
+  animation: glow-spin 6s linear infinite;
+}
+@property --glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.btn--gold { --glow-angle: 0deg; }
+@keyframes glow-spin { to { --glow-angle: 1turn; } }
+
+/* Scroll-driven hero parallax */
+.hero-media img {
+  animation: hero-drift 22s var(--ease) infinite alternate,
+             hero-parallax linear;
+  animation-timeline: scroll(root block);
+  animation-range: 0 600px;
+}
+@keyframes hero-parallax { to { translate: 0 -120px; } }
+
+/* ---------- Scroll progress + view transitions + scroll-snap helpers ---------- */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  block-size: 3px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-light));
+  transform-origin: left center;
+  scale: 0 1;
+  z-index: 9999;
+  pointer-events: none;
+  animation: scroll-fill linear;
+  animation-timeline: scroll(root block);
+}
+@keyframes scroll-fill { to { scale: 1 1; } }
+@supports not (animation-timeline: scroll()) {
+  .scroll-progress { display: none; }
+}
+
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: var(--dur); }
+::view-transition-group(root) { animation-duration: var(--dur); }
+
+.case-rail {
+  display: flex;
+  gap: var(--space-5);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  padding-block-end: var(--space-4);
+}
+.case-rail > * { flex: 0 0 22rem; scroll-snap-align: start; }
+
+/* ---------- Offset-path orb (decorative, single instance) ---------- */
+.hero-orb {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%,
+    color-mix(in oklab, var(--brand) 18%, transparent), transparent 65%);
+  filter: blur(20px);
+  pointer-events: none;
+  offset-path: path("M 0 0 C 200 -120, 400 120, 600 0");
+  animation: orb-travel 22s var(--ease) infinite alternate;
+  z-index: 0;
+}
+@keyframes orb-travel { to { offset-distance: 100%; } }
+
+/* ---------- Anchor offset (sticky header clearance) ---------- */
+[id] { scroll-margin-block-start: 96px; }
+html { scrollbar-gutter: stable; }
+html { scrollbar-color: color-mix(in oklab, var(--brand) 55%, transparent) transparent; }
+
+/* ---------- Cookie banner entry ---------- */
+.cookie-banner {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity var(--dur) var(--ease), translate var(--dur) var(--ease);
+  overscroll-behavior: contain;
+  overflow-anchor: none;
+  padding-block-end: max(1rem, env(safe-area-inset-bottom));
+  padding-inline:
+    max(1rem, env(safe-area-inset-left))
+    max(1rem, env(safe-area-inset-right));
+}
+@starting-style {
+  .cookie-banner.is-visible { opacity: 0; translate: 0 1rem; }
+}
+
+/* ---------- Section rhythm (one canonical vertical spacing) ---------- */
+.section {
+  padding-block: var(--section-y);
+  padding-inline: var(--gutter);
+}
+.section--tight { padding-block: var(--section-y-sm); }
+
+/* ---------- Container + prose measure ---------- */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.prose { max-inline-size: var(--container-prose); margin-inline: auto; }
+.section--dark { background: var(--navy-900); color: var(--text-on-dark); }
+
+/* ---------- Drop cap on mission body ---------- */
+.page-hero + .section .container > p:first-of-type::first-letter,
+.mission-body > p:first-of-type::first-letter {
+  float: inline-start;
+  font-family: var(--font-display);
+  font-size: 3.4em;
+  line-height: 0.85;
+  font-weight: 600;
+  color: var(--brand-strong);
+  margin-inline-end: 0.12em;
+  margin-block-start: 0.08em;
+}
+
+/* ---------- Decorative quotation mark ---------- */
 blockquote {
   position: relative;
   padding-inline-start: 2.5rem;
   font-style: italic;
-  color: var(--muted);
+  color: var(--text-muted);
 }
 blockquote::before {
   content: open-quote;
@@ -1879,46 +1791,11 @@ blockquote::before {
   font-family: var(--font-display);
   font-size: 4rem;
   line-height: 1;
-  color: var(--gold);
+  color: var(--brand);
   opacity: 0.45;
 }
 
-/* ---------- 068. First-line emphasis on the homepage lede ---------- */
-.page-hero .lede::first-line,
-.hero .lede::first-line {
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-/* ---------- 070. dialog::backdrop (future modal support) ---------- */
-dialog::backdrop {
-  background: rgba(6, 13, 26, 0.7);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-}
-
-/* ---------- 071-080. Image masks, blends, focal points ---------- */
-.media-frame img {
-  object-fit: cover;
-  object-position: 50% 30%;
-}
-
-/* Hero image focal: push down so the head stays visible */
-.hero-media img {
-  object-position: 50% 22%;
-}
-
-/* Drop shadow for transparent SVGs / logos (icon-bg treatment) */
-.icon-bg {
-  background: var(--paper);
-  border-radius: 14px;
-  padding: 0.6rem;
-  box-shadow:
-    0 1px 2px rgba(8, 17, 32, 0.05),
-    0 6px 18px rgba(8, 17, 32, 0.08);
-}
-
-/* Duotone blend layer on the mission image */
+/* ---------- Duotone overlay on mission image ---------- */
 .mission-image {
   position: relative;
   isolation: isolate;
@@ -1933,210 +1810,16 @@ dialog::backdrop {
   border-radius: inherit;
 }
 
-/* ---------- 084. 3D perspective on practice-area cards ---------- */
-.practice-grid,
-.grid.grid--2 {
-  perspective: 1200px;
-}
-.grid > .card,
-.practice-grid > .card {
-  transform-style: preserve-3d;
-  transition:
-    translate 0.4s var(--ease),
-    scale 0.4s var(--ease),
-    box-shadow 0.4s var(--ease),
-    rotate 0.4s var(--ease);
-}
-@media (hover: hover) and (pointer: fine) {
-  .grid > .card,
-  .practice-grid > .card {
-    rotate: 0 0 0;
-  }
-  .grid > .card:hover,
-  .practice-grid > .card:hover {
-    rotate: 1.5deg 0 0;
-    translate: 0 -6px;
-    scale: 1.015;
-    box-shadow:
-      0 12px 28px rgba(8, 17, 32, 0.14),
-      0 32px 64px -8px rgba(8, 17, 32, 0.18);
-  }
-}
-
-/* ---------- 086. Offset-path orb decoration (decorative) ---------- */
-.hero-orb {
-  position: absolute;
-  width: 360px;
-  height: 360px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgba(198, 161, 91, 0.18), transparent 65%);
-  filter: blur(20px);
-  pointer-events: none;
-  offset-path: path("M 0 0 C 200 -120, 400 120, 600 0");
-  offset-rotate: 0deg;
-  animation: orb-travel 22s ease-in-out infinite alternate;
-  z-index: 0;
-}
-@keyframes orb-travel {
-  to { offset-distance: 100%; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-orb { animation: none; }
-}
-
-/* ---------- 087. allow-discrete for show/hide panels ---------- */
-.legal-section {
-  transition: opacity 0.2s, display 0.2s allow-discrete;
-}
-.legal-section[hidden] {
-  opacity: 0;
-  display: none;
-}
-
-/* ---------- 089. View transitions for SPA-like navigation (progressive) ---------- */
-@view-transition {
-  navigation: auto;
-}
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.3s;
-  animation-timing-function: var(--ease, ease);
-}
-::view-transition-group(root) {
-  animation-duration: 0.3s;
-}
-
-/* ---------- 090. Scroll-driven progress bar at the top of the page ---------- */
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-  transform-origin: left center;
-  scale: 0 1;
-  z-index: 9999;
-  pointer-events: none;
-  animation: scroll-fill linear;
-  animation-timeline: scroll(root block);
-}
-@keyframes scroll-fill {
-  to { scale: 1 1; }
-}
-@supports not (animation-timeline: scroll()) {
-  .scroll-progress { display: none; }
-}
-
-/* ---------- 091. Horizontal scroll snap for the case rail (if present) ---------- */
-.case-rail {
-  display: flex;
-  gap: 1.25rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  padding-block-end: 1rem;
-}
-.case-rail > * {
-  flex: 0 0 22rem;
-  scroll-snap-align: start;
-}
-
-/* ---------- 092. Smooth anchors with reduced-motion safety ---------- */
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { scroll-behavior: auto !important; }
-}
-
-/* ---------- 095. Stop scroll chaining inside the mobile nav ---------- */
-.main-nav.is-open {
-  overscroll-behavior: contain;
-}
-
-/* ---------- 096. Reserve scrollbar space to prevent layout shift ---------- */
-html {
-  scrollbar-gutter: stable;
-}
-
-/* ---------- 097. Themed scrollbars (Webkit + standard) ---------- */
-html {
-  scrollbar-color: rgba(198, 161, 91, 0.55) transparent;
-}
-html::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-html::-webkit-scrollbar-track {
-  background: transparent;
-}
-html::-webkit-scrollbar-thumb {
-  background: rgba(198, 161, 91, 0.55);
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-html::-webkit-scrollbar-thumb:hover {
-  background: rgba(198, 161, 91, 0.85);
-  background-clip: padding-box;
-}
-
-/* ---------- 099. Clip overflow without a scroll container ---------- */
-.media-frame,
-.hero-media,
-.case-card .thumb {
-  overflow: clip;
-  border-radius: inherit;
-}
-
-/* ---------- 100. Disable scroll anchoring on dynamic regions ---------- */
-.live-feed,
-.cookie-banner {
-  overflow-anchor: none;
-}
-
-/* ---------- 106. Relative color syntax (modern color derivation) ---------- */
-.btn--gold:hover {
-  background:
-    hsl(
-      from var(--gold) h s calc(l + 4)
-    );
-  filter: saturate(1.08);
-}
-
-/* ---------- 107. SVG icons inherit text color (defensive) ---------- */
-svg:not([fill]) {
-  fill: currentColor;
-}
-svg[stroke] {
-  stroke: currentColor;
-}
-
-/* ---------- 110. Native CSS nesting — refactor select rules ---------- */
-.card {
-  & > h3:first-child { margin-block-start: 0.4rem; }
-  & > p:last-child { margin-block-end: 0; }
-  & .card-icon { transition: transform 0.3s var(--ease); }
-  &:hover .card-icon { transform: rotate(-4deg) scale(1.05); }
-}
-@media (hover: hover) and (pointer: fine) {
-  .card:hover .card-icon { transform: rotate(-4deg) scale(1.05); }
-}
-
-/* ---------- 111. sr-only utility (the canonical recipe) ---------- */
+/* ---------- sr-only utility + skip link (canonical recipes) ---------- */
 .sr-only {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
 }
-
-/* ---------- 112. Skip link reveal on focus (modern recipe) ---------- */
 .skip-link {
   position: fixed;
   inset: 0.5rem auto auto 0.5rem;
@@ -2144,83 +1827,112 @@ svg[stroke] {
   z-index: 999;
   background: var(--navy-800);
   color: #fff;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0 0 10px 0;
+  padding: var(--space-3) var(--space-5);
+  border-radius: 0 0 var(--radius-sm) 0;
   text-decoration: none;
-  transition: translate 0.2s var(--ease);
+  transition: translate var(--dur) var(--ease);
 }
 .skip-link:focus,
-.skip-link:focus-visible {
-  translate: 0 0;
-  outline: 3px solid var(--gold);
-  outline-offset: 2px;
-}
+.skip-link:focus-visible { translate: 0 0; }
 
-/* ---------- 118. Predictable stacking context for components ---------- */
-.card,
-.case-card,
-.team-card,
-.form-card,
+/* ---------- Cascade layers (declared once) ---------- */
+@layer reset, base, components, utilities;
+
+/* ---------- Counter-based numbering (general) ---------- */
+li::marker { color: var(--brand-strong); }
+
+/* ---------- Media handling: image focal point + masks ---------- */
 .media-frame,
-.cta-band {
-  isolation: isolate;
+.hero-media,
+.case-card .thumb {
+  overflow: clip;
+  border-radius: inherit;
+}
+.media-frame img { object-fit: cover; object-position: 50% 30%; }
+.hero-media img { object-position: 50% 22%; }
+
+/* ---------- ONE reduced-motion block (was 6) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .btn--gold::before,
+  .hero h1 .accent,
+  .hero-media img,
+  .hero-orb { animation: none !important; }
+  .card:hover, .case-card:hover, .team-card:hover { translate: 0; scale: 1; }
 }
 
-/* ---------- 084+spatial. 3D depth on case cards (subtler) ---------- */
-.case-card {
-  transform-style: preserve-3d;
-  transition:
-    translate 0.35s var(--ease),
-    box-shadow 0.35s var(--ease),
-    rotate 0.35s var(--ease);
+/* ---------- ONE forced-colors block ---------- */
+@media (forced-colors: active) {
+  .btn { border: 1px solid ButtonText; }
+  .form-field input,
+  .form-field select,
+  .form-field textarea { border: 1px solid ButtonText; }
+  .card,
+  .case-card,
+  .team-card { border: 1px solid ButtonText; }
+  :focus-visible { outline: 3px solid Highlight; }
 }
-@media (hover: hover) and (pointer: fine) {
-  .case-card:hover {
-    translate: 0 -8px;
-    rotate: 0.5deg 0 0;
-    box-shadow:
-      0 18px 36px rgba(8, 17, 32, 0.18),
-      0 36px 72px -8px rgba(8, 17, 32, 0.22);
+
+/* ---------- ONE prefers-contrast block ---------- */
+@media (prefers-contrast: more) {
+  :focus-visible { outline-width: 4px; }
+  .card,
+  .case-card,
+  .team-card { border-width: 2px; border-color: currentColor; }
+  .btn { border: 2px solid currentColor; }
+}
+
+/* ---------- ONE pointer:coarse block ---------- */
+@media (pointer: coarse) {
+  .btn,
+  .nav-toggle,
+  .cookie-banner button,
+  .faq-q {
+    min-block-size: 44px;
   }
 }
 
-/* ---------- 082+spatial. Stagger cards with @property-driven delay ---------- */
-.grid .card,
-.practice-grid .card,
-.case-grid .case-card {
-  animation: enter 0.5s var(--ease) both;
-  animation-delay: calc(var(--i, 0) * 70ms);
+/* ---------- Performance: content-visibility + contain ---------- */
+.section--tight,
+.cta-band,
+.cookie-banner {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
 }
-@keyframes enter {
-  from { opacity: 0; translate: 0 0.6rem; }
-  to   { opacity: 1; translate: 0 0; }
-}
-
-/* ---------- 090+spatial. Scroll-driven hero parallax ---------- */
-.hero-media img {
-  animation: hero-drift 22s var(--ease) infinite alternate,
-             hero-parallax linear;
-  animation-timeline: scroll(root block);
-  animation-range: 0 600px;
-}
-@keyframes hero-parallax {
-  to { translate: 0 -120px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-media img { animation: none; }
+.practice-grid,
+.case-grid,
+.team-grid,
+.stats-grid {
+  contain: layout paint;
 }
 
-/* ---------- 092+scroll. Smooth scroll + scroll-padding already in base ---------- */
-/* Verified existing */
-
-/* ---------- 105+modern. color-mix() for interactive state accents ---------- */
-.btn--outline:hover,
-.btn--ghost:hover {
-  background: color-mix(in oklab, var(--navy-800) 6%, transparent);
+/* ---------- ONE print block (was 2) ---------- */
+@media print {
+  .site-header, .nav-toggle, .hero-media, .hero-actions,
+  .cta-band, .scroll-hint, .cookie-banner,
+  .media-frame::before, body::before,
+  nav, .no-print { display: none !important; }
+  body { background: #fff; color: #000; }
+  .section, .page-hero { padding: 0.5cm 0; }
+  .card, .case-card, .team-card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  a { color: #000; text-decoration: underline; }
+  a[href^="http"]::after,
+  a[href^="/"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #555;
+  }
+  .notice { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #000 !important; }
+  .display-xl, .display-lg, .display-md { color: #000 !important; }
 }
-.nav a:hover {
-  color: color-mix(in oklab, var(--gold) 70%, var(--navy-800));
-}
-
-/* ---------- 108+layers. Make sure cascade layers are honored ---------- */
-@layer reset, base, components, utilities;
