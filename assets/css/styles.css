@@ -1527,8 +1527,7 @@ a {
 /* ---------- 116 + 117. Performance: content-visibility + contain for off-screen sections ---------- */
 .section--tight,
 .cta-band,
-.cookie-banner,
-.reveal {
+.cookie-banner {
   content-visibility: auto;
   contain-intrinsic-size: auto 400px;
 }
