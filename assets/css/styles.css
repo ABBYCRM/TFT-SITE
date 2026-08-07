@@ -1610,3 +1610,617 @@ a {
   .hero h1 .accent { animation: none !important; }
   .hero-media img { animation: none !important; }
 }
+
+/* ==========================================================================
+   Spatial UI depth pass — 2026-08-07 (round 2)
+   More depth, more motion, more interaction polish.
+   Continuing from the previous 27-pattern upgrade. Existing rules preserved.
+   ========================================================================== */
+
+/* ---------- 005. Neon glow on the "Trusted" wordmark in the hero ---------- */
+.hero h1 .accent {
+  text-shadow:
+    0 0 0.02em rgba(230, 205, 149, 0.6),
+    0 0 0.6em rgba(198, 161, 91, 0.35);
+}
+
+/* ---------- 006. Layered elevation (refined shadow recipe) ---------- */
+.case-card,
+.team-card,
+.form-card,
+.cta-band {
+  box-shadow:
+    0 1px 2px rgba(8, 17, 32, 0.04),
+    0 6px 16px rgba(8, 17, 32, 0.06),
+    0 24px 48px -8px rgba(8, 17, 32, 0.10);
+}
+@media (prefers-color-scheme: dark) {
+  .case-card,
+  .team-card,
+  .form-card {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.4),
+      0 6px 16px rgba(0, 0, 0, 0.4),
+      0 24px 48px -8px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* ---------- 007. Inner hairline on cards for crisp edge ---------- */
+.case-card,
+.team-card,
+.grid > .card {
+  box-shadow:
+    var(--shadow-sm, none),
+    inset 0 0 0 1px rgba(198, 161, 91, 0.08);
+}
+
+/* ---------- 008. Frosted glass on the header once scrolled ---------- */
+.site-header.is-scrolled {
+  background: rgba(247, 244, 238, 0.78);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  border-block-end: 1px solid var(--line);
+}
+@media (prefers-color-scheme: dark) {
+  .site-header.is-scrolled {
+    background: rgba(6, 13, 26, 0.78);
+    border-block-end: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ---------- 009. Spotlight on the dark stats band ---------- */
+.stats-band {
+  position: relative;
+  isolation: isolate;
+}
+.stats-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      rgba(198, 161, 91, 0.18),
+      transparent 70%
+    );
+  pointer-events: none;
+}
+
+/* ---------- 018. Subgrid alignment in practice-area card grid ---------- */
+.practice-grid,
+.grid.grid--2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: 1.25rem;
+}
+.grid.grid--2 > .card,
+.practice-grid > .card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  align-content: start;
+}
+.grid.grid--2 > .card > .card-link,
+.practice-grid > .card > .card-link {
+  align-self: end;
+}
+
+/* ---------- 020. Stop flex/grid children overflowing ---------- */
+.card,
+.case-card,
+.team-card,
+.form-card,
+.practice-grid > * {
+  min-inline-size: 0;
+  min-width: 0;
+}
+
+/* ---------- 039. Graceful hyphenation in long-form text ---------- */
+.prose,
+.section .lede,
+.info-list {
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* ---------- 040. Drop cap on the homepage mission section body copy ---------- */
+.page-hero + .section .container > p:first-of-type::first-letter,
+.mission-body > p:first-of-type::first-letter {
+  float: inline-start;
+  font-family: var(--font-display);
+  font-size: 3.4em;
+  line-height: 0.85;
+  font-weight: 600;
+  color: var(--gold-strong);
+  margin-inline-end: 0.12em;
+  margin-block-start: 0.08em;
+}
+
+/* ---------- 041. :has() for active FAQ state ---------- */
+.faq-item:has(.faq-q[aria-expanded="true"]) {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(198, 161, 91, 0.12);
+}
+.faq-item:has(.faq-q[aria-expanded="true"]) .faq-q {
+  color: var(--navy-800);
+}
+
+/* ---------- 048. section:target for in-page anchor emphasis ---------- */
+:target {
+  scroll-margin-block-start: 96px;
+  outline: 3px solid var(--gold);
+  outline-offset: 0.5rem;
+  border-radius: 8px;
+  animation: target-pulse 1.6s ease-out 1;
+}
+@keyframes target-pulse {
+  0%   { outline-color: var(--gold); }
+  100% { outline-color: transparent; }
+}
+
+/* ---------- 049. Animate the FAQ answer panel when opened ---------- */
+details.faq-item[open] > .faq-a {
+  animation: faq-reveal 0.25s var(--ease) both;
+}
+@keyframes faq-reveal {
+  from { opacity: 0; translate: 0 -0.4rem; }
+  to   { opacity: 1; translate: 0 0; }
+}
+details.faq-item[open] > summary {
+  color: var(--navy-800);
+}
+
+/* ---------- 050. data-state for the process timeline ---------- */
+.timeline-step[data-state="active"],
+.timeline-step[data-state="complete"] {
+  --dot-color: var(--gold);
+}
+.timeline-step[data-state="pending"] {
+  --dot-color: rgba(255, 255, 255, 0.4);
+}
+.timeline-step {
+  --dot-color: rgba(255, 255, 255, 0.4);
+}
+.timeline-step .step-number {
+  background: var(--dot-color);
+}
+
+/* ---------- 051. accent-color for native form controls ---------- */
+:root {
+  accent-color: var(--gold);
+}
+
+/* ---------- 054. Validation only after user interaction ---------- */
+input:user-invalid,
+textarea:user-invalid,
+select:user-invalid {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+input:user-valid,
+textarea:user-valid,
+select:user-valid {
+  border-color: rgba(34, 197, 94, 0.55);
+}
+
+/* ---------- 059. Brand the text caret in form fields ---------- */
+input,
+textarea,
+[contenteditable="true"] {
+  caret-color: var(--gold-strong);
+}
+
+/* ---------- 061-065. Decorative counters and lists ---------- */
+li::marker {
+  color: var(--gold-strong);
+}
+
+/* Hierarchical numbering for the FAQ outline / TOC if added later */
+.outline ol,
+.toc {
+  list-style: none;
+  counter-reset: item;
+  padding-inline-start: 0;
+}
+.outline li,
+.toc li {
+  counter-increment: item;
+}
+.outline li::before,
+.toc li::before {
+  content: counters(item, ".") " ";
+  color: var(--gold-strong);
+  font-weight: 700;
+  margin-inline-end: 0.4em;
+}
+
+/* Step number badges (process timeline) */
+.timeline-step .step-number {
+  counter-reset: step;
+}
+.timeline ol.timeline-list {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+}
+.timeline ol.timeline-list > li {
+  counter-increment: step;
+  position: relative;
+}
+.timeline ol.timeline-list > li::before {
+  content: counter(step);
+  position: absolute;
+  inset-inline-start: -2.6rem;
+  inset-block-start: 0;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy-900);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-body);
+}
+
+/* ---------- 067. Decorative quotation mark on blockquotes ---------- */
+blockquote {
+  position: relative;
+  padding-inline-start: 2.5rem;
+  font-style: italic;
+  color: var(--muted);
+}
+blockquote::before {
+  content: open-quote;
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: -0.4em;
+  font-family: var(--font-display);
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0.45;
+}
+
+/* ---------- 068. First-line emphasis on the homepage lede ---------- */
+.page-hero .lede::first-line,
+.hero .lede::first-line {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 070. dialog::backdrop (future modal support) ---------- */
+dialog::backdrop {
+  background: rgba(6, 13, 26, 0.7);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* ---------- 071-080. Image masks, blends, focal points ---------- */
+.media-frame img {
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+
+/* Hero image focal: push down so the head stays visible */
+.hero-media img {
+  object-position: 50% 22%;
+}
+
+/* Drop shadow for transparent SVGs / logos (icon-bg treatment) */
+.icon-bg {
+  background: var(--paper);
+  border-radius: 14px;
+  padding: 0.6rem;
+  box-shadow:
+    0 1px 2px rgba(8, 17, 32, 0.05),
+    0 6px 18px rgba(8, 17, 32, 0.08);
+}
+
+/* Duotone blend layer on the mission image */
+.mission-image {
+  position: relative;
+  isolation: isolate;
+}
+.mission-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(12, 27, 51, 0.05), rgba(12, 27, 51, 0.35));
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ---------- 084. 3D perspective on practice-area cards ---------- */
+.practice-grid,
+.grid.grid--2 {
+  perspective: 1200px;
+}
+.grid > .card,
+.practice-grid > .card {
+  transform-style: preserve-3d;
+  transition:
+    translate 0.4s var(--ease),
+    scale 0.4s var(--ease),
+    box-shadow 0.4s var(--ease),
+    rotate 0.4s var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .grid > .card,
+  .practice-grid > .card {
+    rotate: 0 0 0;
+  }
+  .grid > .card:hover,
+  .practice-grid > .card:hover {
+    rotate: 1.5deg 0 0;
+    translate: 0 -6px;
+    scale: 1.015;
+    box-shadow:
+      0 12px 28px rgba(8, 17, 32, 0.14),
+      0 32px 64px -8px rgba(8, 17, 32, 0.18);
+  }
+}
+
+/* ---------- 086. Offset-path orb decoration (decorative) ---------- */
+.hero-orb {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(198, 161, 91, 0.18), transparent 65%);
+  filter: blur(20px);
+  pointer-events: none;
+  offset-path: path("M 0 0 C 200 -120, 400 120, 600 0");
+  offset-rotate: 0deg;
+  animation: orb-travel 22s ease-in-out infinite alternate;
+  z-index: 0;
+}
+@keyframes orb-travel {
+  to { offset-distance: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb { animation: none; }
+}
+
+/* ---------- 087. allow-discrete for show/hide panels ---------- */
+.legal-section {
+  transition: opacity 0.2s, display 0.2s allow-discrete;
+}
+.legal-section[hidden] {
+  opacity: 0;
+  display: none;
+}
+
+/* ---------- 089. View transitions for SPA-like navigation (progressive) ---------- */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+  animation-timing-function: var(--ease, ease);
+}
+::view-transition-group(root) {
+  animation-duration: 0.3s;
+}
+
+/* ---------- 090. Scroll-driven progress bar at the top of the page ---------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  transform-origin: left center;
+  scale: 0 1;
+  z-index: 9999;
+  pointer-events: none;
+  animation: scroll-fill linear;
+  animation-timeline: scroll(root block);
+}
+@keyframes scroll-fill {
+  to { scale: 1 1; }
+}
+@supports not (animation-timeline: scroll()) {
+  .scroll-progress { display: none; }
+}
+
+/* ---------- 091. Horizontal scroll snap for the case rail (if present) ---------- */
+.case-rail {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  padding-block-end: 1rem;
+}
+.case-rail > * {
+  flex: 0 0 22rem;
+  scroll-snap-align: start;
+}
+
+/* ---------- 092. Smooth anchors with reduced-motion safety ---------- */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { scroll-behavior: auto !important; }
+}
+
+/* ---------- 095. Stop scroll chaining inside the mobile nav ---------- */
+.main-nav.is-open {
+  overscroll-behavior: contain;
+}
+
+/* ---------- 096. Reserve scrollbar space to prevent layout shift ---------- */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* ---------- 097. Themed scrollbars (Webkit + standard) ---------- */
+html {
+  scrollbar-color: rgba(198, 161, 91, 0.55) transparent;
+}
+html::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background: rgba(198, 161, 91, 0.55);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(198, 161, 91, 0.85);
+  background-clip: padding-box;
+}
+
+/* ---------- 099. Clip overflow without a scroll container ---------- */
+.media-frame,
+.hero-media,
+.case-card .thumb {
+  overflow: clip;
+  border-radius: inherit;
+}
+
+/* ---------- 100. Disable scroll anchoring on dynamic regions ---------- */
+.live-feed,
+.cookie-banner {
+  overflow-anchor: none;
+}
+
+/* ---------- 106. Relative color syntax (modern color derivation) ---------- */
+.btn--gold:hover {
+  background:
+    hsl(
+      from var(--gold) h s calc(l + 4)
+    );
+  filter: saturate(1.08);
+}
+
+/* ---------- 107. SVG icons inherit text color (defensive) ---------- */
+svg:not([fill]) {
+  fill: currentColor;
+}
+svg[stroke] {
+  stroke: currentColor;
+}
+
+/* ---------- 110. Native CSS nesting — refactor select rules ---------- */
+.card {
+  & > h3:first-child { margin-block-start: 0.4rem; }
+  & > p:last-child { margin-block-end: 0; }
+  & .card-icon { transition: transform 0.3s var(--ease); }
+  &:hover .card-icon { transform: rotate(-4deg) scale(1.05); }
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .card-icon { transform: rotate(-4deg) scale(1.05); }
+}
+
+/* ---------- 111. sr-only utility (the canonical recipe) ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- 112. Skip link reveal on focus (modern recipe) ---------- */
+.skip-link {
+  position: fixed;
+  inset: 0.5rem auto auto 0.5rem;
+  translate: 0 -200%;
+  z-index: 999;
+  background: var(--navy-800);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 10px 0;
+  text-decoration: none;
+  transition: translate 0.2s var(--ease);
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  translate: 0 0;
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ---------- 118. Predictable stacking context for components ---------- */
+.card,
+.case-card,
+.team-card,
+.form-card,
+.media-frame,
+.cta-band {
+  isolation: isolate;
+}
+
+/* ---------- 084+spatial. 3D depth on case cards (subtler) ---------- */
+.case-card {
+  transform-style: preserve-3d;
+  transition:
+    translate 0.35s var(--ease),
+    box-shadow 0.35s var(--ease),
+    rotate 0.35s var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .case-card:hover {
+    translate: 0 -8px;
+    rotate: 0.5deg 0 0;
+    box-shadow:
+      0 18px 36px rgba(8, 17, 32, 0.18),
+      0 36px 72px -8px rgba(8, 17, 32, 0.22);
+  }
+}
+
+/* ---------- 082+spatial. Stagger cards with @property-driven delay ---------- */
+.grid .card,
+.practice-grid .card,
+.case-grid .case-card {
+  animation: enter 0.5s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes enter {
+  from { opacity: 0; translate: 0 0.6rem; }
+  to   { opacity: 1; translate: 0 0; }
+}
+
+/* ---------- 090+spatial. Scroll-driven hero parallax ---------- */
+.hero-media img {
+  animation: hero-drift 22s var(--ease) infinite alternate,
+             hero-parallax linear;
+  animation-timeline: scroll(root block);
+  animation-range: 0 600px;
+}
+@keyframes hero-parallax {
+  to { translate: 0 -120px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-media img { animation: none; }
+}
+
+/* ---------- 092+scroll. Smooth scroll + scroll-padding already in base ---------- */
+/* Verified existing */
+
+/* ---------- 105+modern. color-mix() for interactive state accents ---------- */
+.btn--outline:hover,
+.btn--ghost:hover {
+  background: color-mix(in oklab, var(--navy-800) 6%, transparent);
+}
+.nav a:hover {
+  color: color-mix(in oklab, var(--gold) 70%, var(--navy-800));
+}
+
+/* ---------- 108+layers. Make sure cascade layers are honored ---------- */
+@layer reset, base, components, utilities;
