@@ -1364,7 +1364,7 @@ body::before {
 .team-card {
   border: 1.5px solid transparent;
   background:
-    linear-gradient(var(--paper), var(--paper)) padding-box,
+    linear-gradient(var(--paper-theme, var(--paper)), var(--paper-theme, var(--paper))) padding-box,
     linear-gradient(135deg,
       rgba(198, 161, 91, 0.35),
       rgba(12, 27, 51, 0.12) 40%,
